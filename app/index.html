@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+          integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+          crossorigin=""/>
+    <link rel="stylesheet" href="bootstrap-slider.css"/>
+    <script src="bootstrap-slider.js"></script>
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-geodesy/v0.1.0/leaflet-geodesy.js'></script>
+    <style>
+.header {
+    height: 75px;
+    background-color: antiquewhite;
+}
+
+.footer {
+    margin-top: 20px;
+    height: 75px;
+}
+
+#map {
+    height: 600px;
+}
+
+.map_container {
+    height: 605px;
+}
+
+.test {
+    background: rgba(255, 255, 255, 0.8);;
+}
+
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+
+    <div class="row map_container">
+        <div class="col-md-12">
+            <div id="map"></div>
+        </div>
+
+    </div>
+
+    <div class="row footer">
+        <div class="col-md-5"></div>
+        <div class="col-md-2">
+            <input type="text" id="time_idx" value="10">
+        </div>
+        <div class="col-md-5"></div>
+    </div>
+
+</div>
+
+<!-- Make sure you put this AFTER Leaflet's CSS -->
+<script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+        integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+        crossorigin=""></script>
+
+<script>
+var map = L.map('map').setView([6.91376, 79.8752], 15);
+
+var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+var osm = new L.TileLayer(osmUrl, {minZoom: 8, maxZoom: 18, attribution: osmAttrib});
+map.addLayer(osm);
+
+wardlayer = L.geoJSON();
+wardlayer.addTo(map);
+
+abadonLayer = L.geoJSON();
+abadonLayer.addTo(map);
+
+baseMap = {
+    "OSM": osm
+}
+
+overlayMap = {
+    "Risk": wardlayer,
+    "Abadon area": abadonLayer
+}
+layerControl = L.control.layers(baseMap, overlayMap).addTo(map);
+
+var percentColors = [
+    { pct: 0.0, color: { r: 0xff, g: 0x00, b: 0 } },
+    { pct: 0.25, color: { r: 0x33, g: 0x00, b: 0 } },
+    { pct: 0.5, color: { r: 0x88, g: 0x00, b: 0 } },
+    { pct: 0.75, color: { r: 0xaa, g: 0x00, b: 0 } },
+    { pct: 1.0, color: { r: 0xff, g: 0x00, b: 0 } } ];
+
+var getColorForPercentage = function(pct) {
+    for (var i = 1; i < percentColors.length - 1; i++) {
+        if (pct < percentColors[i].pct) {
+            break;
+        }
+    }
+    var lower = percentColors[i - 1];
+    var upper = percentColors[i];
+    var range = upper.pct - lower.pct;
+    var rangePct = (pct - lower.pct) / range;
+    var pctLower = 1 - rangePct;
+    var pctUpper = rangePct;
+    var color = {
+        r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
+        g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
+        b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
+    };
+    return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
+    // or output as hex if preferred
+}
+
+function ColorLuminance(hex, lum) {
+
+    // validate hex string
+    hex = String(hex).replace(/[^0-9a-f]/gi, '');
+    if (hex.length < 6) {
+        hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+    }
+    lum = lum || 0;
+
+    // convert to decimal and change luminosity
+    var rgb = "#", c, i;
+    for (i = 0; i < 3; i++) {
+        c = parseInt(hex.substr(i*2,2), 16);
+        c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
+        rgb += ("00"+c).substr(c.length);
+    }
+
+    return rgb;
+}
+
+function sliderSetup() {
+    var slider = $('#time_idx').bootstrapSlider({
+        max: 5,
+        value: 5
+    });
+
+    slider.on('change', function(evt) {
+        renderRiskValue(5 - evt.value.newValue)
+
+    })
+}
+
+function renderControlCircle(lat, lng, idx, type) {
+    var score = (5 - idx)/ 5;
+    var color = "#1ebbd7";
+    if (type == 'spray') {
+        color = "#5ebb27";
+    } else if (type == 'dunk') {
+        color = "#4e3327";
+    }
+    var rcolor = ColorLuminance('color', score);
+    return LGeo.circle([lat, lng], 300, {radius: 300, color: rcolor})
+}
+
+function renderCases() {
+    $.ajax({
+        datatype: "json",
+        url: "cases.json",
+        success: function(data) {
+
+            var group = L.layerGroup()
+
+            $(data).each(function(key, value) {
+                score = (5 - value.weekIdx)/ 5;
+                var color = ColorLuminance('#ff0000', score);
+                var rcolor = ColorLuminance('#1ebbd7', score);
+
+                c1 = L.circle([value.lat, value.lng], {radius: 5, color: color, fillColor: color});
+                c2 = L.circle([value.lat, value.lng], {radius: 100, color: color, fillColor: color});
+                group.addLayer(c1);
+                group.addLayer(c2);
+            })
+
+            layerControl.addOverlay(group , "Case");
+        }
+    })
+}
+
+function renderControl() {
+    $.ajax({
+        datatype: "json",
+        url: "control.json",
+        success: function(data) {
+            var group = L.layerGroup()
+
+            $(data).each(function(key, value) {
+                var type = value.type;
+                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "green", fillColor: "green"}));
+                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
+            });
+
+            layerControl.addOverlay(group , "Active Breading site");
+        }
+    })
+}
+
+function loadAbadonLayer() {
+    $.ajax({
+        dataType: "json",
+        url: "openLand.geojson",
+        success: function(data) {
+
+            $(data.features).each(function(key, feature) {
+
+                abadonLayer.addData(feature, {
+                    style: function(f) {
+                        return {color: "#0000ff"};
+                    }
+                });
+            });
+        }
+    })
+}
+
+function renderRiskValue(idx) {
+    $.ajax({
+        dataType: "json",
+        url: "risk.json",
+        success: function(data) {
+            var rmap = {}
+            $(data[idx].risks).each(function(key, value) {
+                rmap[value.ward] = value.value;
+            })
+
+            wardlayer.eachLayer(function (layer) {
+                var no = layer.feature.properties['WD_NUMBER'];
+                console.log(no);
+                var value = rmap[no];
+                if (value != undefined) {
+                    layer.setStyle({
+                        fillColor :'red',
+                        weight: 2,
+                        opacity: 1,
+                        color: 'white',
+                        dashArray: '3',
+                        fillOpacity: value / 200
+                    })
+                } else {
+                    layer.setStyle({
+                        fillColor :'white',
+                        weight: 1,
+                        opacity: 1,
+                        color: 'red',
+                        dashArray: '3',
+                        fillOpacity: 0
+                    })
+                }
+
+            });
+        }
+    });
+}
+
+
+$(function() {
+
+    sliderSetup();
+
+    function onEachFeature(feature, layer) {
+        if (feature.properties && feature.properties.WD_NAME) {
+            layer.bindPopup(feature.properties.WD_NAME);
+        }
+    }
+
+    $.ajax({
+        dataType: "json",
+        url: "cmc.geojson",
+        success: function(response) {
+
+//            L.geoJson(response, {
+//                onEachFeature: onEachFeature
+//            }).addTo(map);
+
+            $(response.features).each(function(key, data) {
+                d = wardlayer.addData(data);
+                var name = data.properties.WD_NAME;
+                console.log(name);
+                d.bindTooltip(name, {closeButton: false, offset: L.point(0, -20)});
+
+                console.log(d);
+
+            });
+
+            renderRiskValue(0);
+            renderCases();
+            renderControl();
+            loadAbadonLayer();
+        }
+    });
+
+    $('.map_container').height(window.screen.height - 160);
+    $('#map').height(window.screen.height - 160);
+
+    map.invalidateSize();
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>

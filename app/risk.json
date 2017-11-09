@@ -1,0 +1,71 @@
+[
+  {
+    "risks": [
+      { "ward": 1, "value": 20 },
+      { "ward": 2, "value": 90 },
+      { "ward": 3, "value": 40 },
+      { "ward": 4, "value": 80 },
+      { "ward": 5, "value": 30 },
+      { "ward": 6, "value": 70 },
+      { "ward": 7, "value": 20 },
+      { "ward": 8, "value": 90 },
+      { "ward": 9, "value": 40 },
+      { "ward": 10, "value": 80 },
+      { "ward": 11, "value": 10 },
+      { "ward": 12, "value": 20 },
+      { "ward": 13, "value": 20 },
+      { "ward": 14, "value": 90 },
+      { "ward": 15, "value": 30 },
+      { "ward": 16, "value": 80 },
+      { "ward": 17, "value": 20 },
+      { "ward": 18, "value": 73 },
+      { "ward": 19, "value": 20 },
+      { "ward": 20, "value": 80 },
+      { "ward": 21, "value": 20 },
+      { "ward": 22, "value": 15 },
+      { "ward": 23, "value": 33 },
+      { "ward": 24, "value": 33 },
+      { "ward": 25, "value": 90 },
+      { "ward": 26, "value": 30 },
+      { "ward": 27, "value": 80 },
+      { "ward": 28, "value": 20 },
+      { "ward": 29, "value": 73 },
+      { "ward": 30, "value": 20 },
+      { "ward": 31, "value": 80 },
+      { "ward": 32, "value": 20 },
+      { "ward": 33, "value": 15 },
+      { "ward": 34, "value": 33 },
+      { "ward": 35, "value": 33 }
+    ]
+  },
+  {
+    "risks": [
+      { "ward": 3, "value": 20 },
+      { "ward": 7, "value": 90 }
+    ]
+  },
+  {
+    "risks": [
+      { "ward": 3, "value": 20 },
+      { "ward": 4, "value": 90 }
+    ]
+  },
+  {
+    "risks": [
+      { "ward": 3, "value": 20 },
+      { "ward": 6, "value": 90 }
+    ]
+  },
+  {
+    "risks": [
+      { "ward": 5, "value": 20 },
+      { "ward": 2, "value": 90 }
+    ]
+  },
+  {
+    "risks": [
+      { "ward": 5, "value": 60 },
+      { "ward": 2, "value": 20 }
+    ]
+  }
+]

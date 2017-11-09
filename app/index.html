@@ -230,7 +230,7 @@ function renderRiskValue(idx) {
             var rmap = {}
             $(data[idx].risks).each(function(key, value) {
                 rmap[value.ward] = value.value;
-            })
+            });
 
             wardlayer.eachLayer(function (layer) {
                 var no = layer.feature.properties['WD_NUMBER'];
@@ -272,24 +272,27 @@ $(function() {
         }
     }
 
+    function bindPopup(layer, data) {
+        console.log(data.properties.WD_NAME);
+        layer.bindPopup(data.properties.WD_NAME, {closeButton: false, offset: L.point(0, -20)});
+    }
+
     $.ajax({
         dataType: "json",
         url: "cmc.geojson",
         success: function(response) {
 
-//            L.geoJson(response, {
-//                onEachFeature: onEachFeature
-//            }).addTo(map);
-
-            $(response.features).each(function(key, data) {
-                d = wardlayer.addData(data);
-                var name = data.properties.WD_NAME;
-                console.log(name);
-                d.bindTooltip(name, {closeButton: false, offset: L.point(0, -20)});
-
-                console.log(d);
-
-            });
+            wardlayer = L.geoJson(response, {
+                onEachFeature: onEachFeature,
+                style: {
+                    fillColor :'white',
+                    weight: 1,
+                    opacity: 1,
+                    color: 'red',
+                    dashArray: '3',
+                    fillOpacity: 0
+                }
+            }).addTo(map);
 
             renderRiskValue(0);
             renderCases();
@@ -301,7 +304,6 @@ $(function() {
     $('.map_container').height(window.screen.height - 160);
     $('#map').height(window.screen.height - 160);
 
-    map.invalidateSize();
 
 
 });

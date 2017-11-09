@@ -74,8 +74,6 @@ var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> 
 var osm = new L.TileLayer(osmUrl, {minZoom: 8, maxZoom: 18, attribution: osmAttrib});
 map.addLayer(osm);
 
-wardlayer = L.geoJSON();
-wardlayer.addTo(map);
 
 abadonLayer = L.geoJSON();
 abadonLayer.addTo(map);
@@ -85,7 +83,6 @@ baseMap = {
 }
 
 overlayMap = {
-    "Risk": wardlayer,
     "Abadon area": abadonLayer
 }
 layerControl = L.control.layers(baseMap, overlayMap).addTo(map);
@@ -308,6 +305,25 @@ function renderHighDensityArea() {
         }
     })
 }
+function loadSatScan() {
+    $.ajax({
+        dataType: "json",
+        url: "DengueSat.geojson",
+        success: function(response) {
+            var satScan = L.geoJson(response, {
+                style: {
+                    fillColor: 'red',
+                    weight: 10,
+                    opacity: 1,
+                    color: 'red',
+                    dashArray: '1',
+                    fillOpacity: 0
+                }
+            });
+            layerControl.addOverlay(satScan , "Cluster Detected");
+        }
+    });
+}
 
 //======================
 function loadAbadonLayer() {
@@ -324,6 +340,24 @@ function loadAbadonLayer() {
                     }
                 });
             });
+        }
+    })
+}
+
+function renderFoggingArea() {
+    $.ajax({
+        datatype: "json",
+        url: "control.json",
+        success: function(data) {
+            var group = L.layerGroup()
+
+            $(data).each(function(key, value) {
+                var type = value.type;
+                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "blue", fillColor: "blue"}));
+                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type, 50));
+            });
+
+            layerControl.addOverlay(group , "Fogging area");
         }
     })
 }
@@ -398,13 +432,17 @@ $(function() {
                     dashArray: '3',
                     fillOpacity: 0
                 }
-            }).addTo(map);
+            });
+
+            layerControl.addOverlay(wardlayer , "Risk");
+
 
             renderRiskValue(0);
             renderCases();
             renderControl();
 
-         //   loadAbadonLayer();
+            loadAbadonLayer();
+            renderFoggingArea();
          // added by Diminudu, Harsha & Roshan
             renderHistoricalHighRiskArea();
             renderSchools();
@@ -412,6 +450,7 @@ $(function() {
             renderConstructionSites();
             renderHighDensityArea();
             renderAbandonedSites();
+            loadSatScan();
             //=========================
         }
     });

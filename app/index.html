@@ -19,27 +19,27 @@
     <script src="bootstrap-slider.js"></script>
     <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-geodesy/v0.1.0/leaflet-geodesy.js'></script>
     <style>
-.header {
-    height: 75px;
-    background-color: antiquewhite;
-}
+        .header {
+            height: 75px;
+            background-color: antiquewhite;
+        }
 
-.footer {
-    margin-top: 20px;
-    height: 75px;
-}
+        .footer {
+            margin-top: 20px;
+            height: 75px;
+        }
 
-#map {
-    height: 600px;
-}
+        #map {
+            height: 600px;
+        }
 
-.map_container {
-    height: 605px;
-}
+        .map_container {
+            height: 605px;
+        }
 
-.test {
-    background: rgba(255, 255, 255, 0.8);;
-}
+        .test {
+            background: rgba(255, 255, 255, 0.8);;
+        }
 
     </style>
 </head>
@@ -72,429 +72,438 @@
 <script src="awe.js"></script>
 
 <script>
-var map = L.map('map').setView([6.91376, 79.8752], 15);
+    var map = L.map('map').setView([6.91376, 79.8752], 15);
 
-var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-var osm = new L.TileLayer(osmUrl, {minZoom: 8, maxZoom: 18, attribution: osmAttrib});
-map.addLayer(osm);
+    var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+    var osm = new L.TileLayer(osmUrl, {minZoom: 8, maxZoom: 18, attribution: osmAttrib});
+    map.addLayer(osm);
 
 
-abadonLayer = L.geoJSON();
-abadonLayer.addTo(map);
+    abadonLayer = L.geoJSON();
+    abadonLayer.addTo(map);
 
-baseMap = {
-    "OSM": osm
-}
+    baseMap = {
+        "OSM": osm
+    }
 
-overlayMap = {
-    "Abadon area": abadonLayer
-}
-layerControl = L.control.layers(baseMap, overlayMap).addTo(map);
+    overlayMap = {
+        "Abadon area": abadonLayer
+    }
+    layerControl = L.control.layers(baseMap, overlayMap).addTo(map);
 
-var percentColors = [
-    { pct: 0.0, color: { r: 0xff, g: 0x00, b: 0 } },
-    { pct: 0.25, color: { r: 0x33, g: 0x00, b: 0 } },
-    { pct: 0.5, color: { r: 0x88, g: 0x00, b: 0 } },
-    { pct: 0.75, color: { r: 0xaa, g: 0x00, b: 0 } },
-    { pct: 1.0, color: { r: 0xff, g: 0x00, b: 0 } } ];
+    var percentColors = [
+        { pct: 0.0, color: { r: 0xff, g: 0x00, b: 0 } },
+        { pct: 0.25, color: { r: 0x33, g: 0x00, b: 0 } },
+        { pct: 0.5, color: { r: 0x88, g: 0x00, b: 0 } },
+        { pct: 0.75, color: { r: 0xaa, g: 0x00, b: 0 } },
+        { pct: 1.0, color: { r: 0xff, g: 0x00, b: 0 } } ];
 
-var getColorForPercentage = function(pct) {
-    for (var i = 1; i < percentColors.length - 1; i++) {
-        if (pct < percentColors[i].pct) {
-            break;
+    var getColorForPercentage = function(pct) {
+        for (var i = 1; i < percentColors.length - 1; i++) {
+            if (pct < percentColors[i].pct) {
+                break;
+            }
         }
-    }
-    var lower = percentColors[i - 1];
-    var upper = percentColors[i];
-    var range = upper.pct - lower.pct;
-    var rangePct = (pct - lower.pct) / range;
-    var pctLower = 1 - rangePct;
-    var pctUpper = rangePct;
-    var color = {
-        r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
-        g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
-        b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
-    };
-    return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
-    // or output as hex if preferred
-}
-
-function ColorLuminance(hex, lum) {
-
-    // validate hex string
-    hex = String(hex).replace(/[^0-9a-f]/gi, '');
-    if (hex.length < 6) {
-        hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
-    }
-    lum = lum || 0;
-
-    // convert to decimal and change luminosity
-    var rgb = "#", c, i;
-    for (i = 0; i < 3; i++) {
-        c = parseInt(hex.substr(i*2,2), 16);
-        c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
-        rgb += ("00"+c).substr(c.length);
+        var lower = percentColors[i - 1];
+        var upper = percentColors[i];
+        var range = upper.pct - lower.pct;
+        var rangePct = (pct - lower.pct) / range;
+        var pctLower = 1 - rangePct;
+        var pctUpper = rangePct;
+        var color = {
+            r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
+            g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
+            b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
+        };
+        return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
+        // or output as hex if preferred
     }
 
-    return rgb;
-}
+    function ColorLuminance(hex, lum) {
 
-function sliderSetup() {
-    var slider = $('#time_idx').bootstrapSlider({
-        max: 5,
-        value: 1
-    });
+        // validate hex string
+        hex = String(hex).replace(/[^0-9a-f]/gi, '');
+        if (hex.length < 6) {
+            hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+        }
+        lum = lum || 0;
 
-    slider.on('change', function(evt) {
-        renderRiskValue(5 - evt.value.newValue)
+        // convert to decimal and change luminosity
+        var rgb = "#", c, i;
+        for (i = 0; i < 3; i++) {
+            c = parseInt(hex.substr(i*2,2), 16);
+            c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
+            rgb += ("00"+c).substr(c.length);
+        }
 
-    })
-}
-
-function renderControlCircle(lat, lng, idx, type) {
-    var score = (5 - idx)/ 5;
-    var color = "#1ebbd7";
-    if (type == 'spray') {
-        color = "#5ebb27";
-    } else if (type == 'dunk') {
-        color = "#4e3327";
+        return rgb;
     }
-    var rcolor = ColorLuminance('color', score);
+
+    function sliderSetup() {
+        var slider = $('#time_idx').bootstrapSlider({
+            max: 5,
+            value: 1
+        });
+
+        slider.on('change', function(evt) {
+            renderRiskValue(5 - evt.value.newValue)
+
+        })
+    }
+
+    function renderControlCircle(lat, lng, idx, type) {
+        var score = (5 - idx)/ 5;
+        var color = "#1ebbd7";
+        if (type == 'spray') {
+            color = "#5ebb27";
+        } else if (type == 'dunk') {
+            color = "#4e3327";
+        }
+        var rcolor = ColorLuminance('color', score);
     return LGeo.circle([lat, lng], 300, {radius: 300, color: color})
-}
+    }
 
-function renderCases() {
-    $.ajax({
-        datatype: "json",
-        url: "cases.json",
-        success: function(data) {
+    function renderCases() {
+        $.ajax({
+            datatype: "json",
+            url: "cases.json",
+            success: function(data) {
 
-            var group = L.layerGroup()
+                var group = L.layerGroup()
 
-            $(data).each(function(key, value) {
-                score = (5 - value.weekIdx)/ 5;
-                var color = ColorLuminance('#ff0000', score);
-                var rcolor = ColorLuminance('#1ebbd7', score);
+                $(data).each(function(key, value) {
+                    score = (5 - value.weekIdx)/ 5;
+                    var color = ColorLuminance('#ff0000', score);
+                    var rcolor = ColorLuminance('#1ebbd7', score);
 
-                c1 = L.circle([value.lat, value.lng], {radius: 5, color: color, fillColor: color});
-                c2 = L.circle([value.lat, value.lng], {radius: 100, color: color, fillColor: color});
-                group.addLayer(c1);
-                group.addLayer(c2);
-            })
+                    c1 = L.circle([value.lat, value.lng], {radius: 5, color: color, fillColor: color});
+                    c2 = L.circle([value.lat, value.lng], {radius: 100, color: color, fillColor: color});
+                    group.addLayer(c1);
+                    group.addLayer(c2);
+                })
 
-            layerControl.addOverlay(group , "Case");
-        }
-    })
-}
+                layerControl.addOverlay(group , "Case");
+            }
+        })
+    }
 
 function renderBreadingSite() {
-    $.ajax({
-        datatype: "json",
-        url: "breadingSite.json",
-        success: function(data) {
-            var group = L.layerGroup()
+        $.ajax({
+            datatype: "json",
+            url: "breadingSite.json",
+            success: function(data) {
+                var group = L.layerGroup()
 
-            $(data).each(function(key, value) {
-                var type = value.type;
+                $(data).each(function(key, value) {
+                    var type = value.type;
                 group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "green", fillColor: "green"}));
-                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
-            });
-
-            layerControl.addOverlay(group , "Active Breading site");
-        }
-    })
-}
-// Added by Dimindu, Harsha, Roshan ==============
-
-function renderHistoricalHighRiskArea() {
-    $.ajax({
-        datatype: "json",
-        url: "highRiskArea.json",
-        success: function(data) {
-            var group = L.layerGroup()
-
-            $(data).each(function(key, value) {
-                var type = value.type;
-                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
-                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
-            });
-
-            layerControl.addOverlay(group , "high risk area");
-        }
-    })
-}
-
-function renderSchools() {
-    $.ajax({
-        datatype: "json",
-        url: "Schools.json",
-        success: function(data) {
-            var group = L.layerGroup()
-
-            $(data).each(function(key, value) {
-                var type = value.type;
-                var marker = L.icon.fontAwesome({
-                    iconClasses: 'fa fa-graduation-cap', // you _could_ add other icon classes, not tested.
-                    markerColor: '#00a9ce',
-                    iconColor: '#FFF',
-                    iconXOffset: -4
+                    group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
                 });
 
+                layerControl.addOverlay(group , "Active Breading site");
+            }
+        })
+    }
+    // Added by Dimindu, Harsha, Roshan ==============
 
-                group.addLayer(L.marker([value.lat, value.lng], {icon: marker}));
-            });
+    function renderHistoricalHighRiskArea() {
+        $.ajax({
+            datatype: "json",
+            url: "highRiskArea.json",
+            success: function(data) {
+                var group = L.layerGroup()
 
-            layerControl.addOverlay(group , "Schools");
-        }
-    })
-}
-function renderWaterArea() {
-    $.ajax({
-        datatype: "json",
-        url: "WaterArea.json",
-        success: function(data) {
-            var group = L.layerGroup()
+                $(data).each(function(key, value) {
+                    var type = value.type;
+                    group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
+                    group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
+                });
 
-            $(data).each(function(key, value) {
-                var type = value.type;
-                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
-                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
-            });
+                layerControl.addOverlay(group , "high risk area");
+            }
+        })
+    }
 
-            layerControl.addOverlay(group , "Water Area");
-        }
-    })
-}
-function renderConstructionSites() {
-    $.ajax({
-        datatype: "json",
-        url: "ConstructionSites.json",
-        success: function(data) {
-            var group = L.layerGroup()
+    function renderSchools() {
+        $.ajax({
+            datatype: "json",
+            url: "Schools.json",
+            success: function(data) {
+                var group = L.layerGroup()
 
-            $(data).each(function(key, value) {
-                var type = value.type;
-                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
-                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
-            });
+                $(data).each(function(key, value) {
+                    var type = value.type;
+                    var marker = L.icon.fontAwesome({
+                        iconClasses: 'fa fa-graduation-cap', // you _could_ add other icon classes, not tested.
+                        markerColor: '#00a9ce',
+                        iconColor: '#FFF',
+                        iconXOffset: -4
+                    });
 
-            layerControl.addOverlay(group , "Construction Sites");
-        }
-    })
-}
-function renderAbandonedSites() {
-    $.ajax({
-        datatype: "json",
-        url: "AbandonedSite.json",
-        success: function(data) {
-            var group = L.layerGroup()
 
-            $(data).each(function(key, value) {
-                var type = value.type;
-                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
-                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
-            })
+                    group.addLayer(L.marker([value.lat, value.lng], {icon: marker}));
+                });
 
-            layerControl.addOverlay(group , "Abandoned Sites");
-        }
-    })
-}
-function renderHighDensityArea() {
-    $.ajax({
-        datatype: "json",
-        url: "HighDensityArea.json",
-        success: function(data) {
-            var group = L.layerGroup()
+                layerControl.addOverlay(group , "Schools");
+            }
+        })
+    }
+    function renderWaterArea() {
+        $.ajax({
+            datatype: "json",
+            url: "WaterArea.json",
+            success: function(data) {
+                var group = L.layerGroup()
 
-            $(data).each(function(key, value) {
-                var type = value.type;
-                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
-                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
-            })
+                $(data).each(function(key, value) {
+                    var type = value.type;
+                    group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
+                    group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
+                });
 
-            layerControl.addOverlay(group , "High Density Area");
-        }
-    })
-}
-function loadSatScan() {
-    $.ajax({
-        dataType: "json",
-        url: "DengueSat.geojson",
-        success: function(response) {
-            var satScan = L.geoJson(response, {
-                style: {
-                    fillColor: 'red',
-                    weight: 3,
-                    opacity: 1,
-                    color: 'red',
-                    dashArray: '1',
-                    fillOpacity: 0
-                }
-            });
-            layerControl.addOverlay(satScan , "Cluster Detected");
-        }
-    });
-}
+                layerControl.addOverlay(group , "Water Area");
+            }
+        })
+    }
+    function renderConstructionSites() {
+        $.ajax({
+            datatype: "json",
+            url: "ConstructionSites.json",
+            success: function(data) {
+                var group = L.layerGroup()
 
-//======================
-function loadAbadonLayer() {
-    $.ajax({
-        dataType: "json",
-        url: "openLand.geojson",
-        success: function(data) {
+                $(data).each(function(key, value) {
+                    var type = value.type;
+                    var marker = L.icon.fontAwesome({
+                        iconClasses: 'fa fa-building', // you _could_ add other icon classes, not tested.
+                        markerColor: '#0aafff',
+                        iconColor: '#eee',
+                        iconXOffset: 0
+                    });
 
-            $(data.features).each(function(key, feature) {
 
-                abadonLayer.addData(feature, {
-                    style: function(f) {
-                        return {color: "#0000ff"};
+                    group.addLayer(L.marker([value.lat, value.lng], {icon: marker}));
+                });
+
+                layerControl.addOverlay(group , "Construction Sites");
+            }
+        })
+    }
+    /*
+     function renderAbandonedSites() {
+     $.ajax({
+     datatype: "json",
+     url: "AbandonedSite.json",
+     success: function(data) {
+     var group = L.layerGroup()
+
+     $(data).each(function(key, value) {
+     var type = value.type;
+     group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
+     group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
+     })
+
+     layerControl.addOverlay(group , "Abandoned Sites");
+     }
+     })
+     }
+     */
+    function renderHighDensityArea() {
+        $.ajax({
+            datatype: "json",
+            url: "HighDensityArea.json",
+            success: function(data) {
+                var group = L.layerGroup()
+
+                $(data).each(function(key, value) {
+                    var type = value.type;
+                    group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
+                    group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
+                })
+
+                layerControl.addOverlay(group , "High Density Area");
+            }
+        })
+    }
+    function loadSatScan() {
+        $.ajax({
+            dataType: "json",
+            url: "DengueSat.geojson",
+            success: function(response) {
+                var satScan = L.geoJson(response, {
+                    style: {
+                        fillColor: 'red',
+                        weight: 3,
+                        opacity: 1,
+                        color: 'red',
+                        dashArray: '1',
+                        fillOpacity: 0
                     }
                 });
-            });
+                layerControl.addOverlay(satScan , "Cluster Detected");
+            }
+        });
+    }
+
+    //======================
+    function loadAbadonLayer() {
+        $.ajax({
+            dataType: "json",
+            url: "openLand.geojson",
+            success: function(data) {
+
+                $(data.features).each(function(key, feature) {
+
+                    abadonLayer.addData(feature, {
+                        style: function(f) {
+                            return {color: "#0000ff"};
+                        }
+                    });
+                });
+            }
+        })
+    }
+
+    function renderFoggingArea() {
+        $.ajax({
+            datatype: "json",
+            url: "control.json",
+            success: function(data) {
+                var group = L.layerGroup()
+
+                $(data).each(function(key, value) {
+                    var type = value.type;
+                    group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "blue", fillColor: "blue"}));
+                    group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type, 50));
+                });
+
+                layerControl.addOverlay(group , "Fogging area");
+            }
+        })
+    }
+
+    function renderRiskValue(idx) {
+        $.ajax({
+            dataType: "json",
+            url: "risk.json",
+            success: function(data) {
+                var rmap = {}
+                $(data[idx].risks).each(function(key, value) {
+                    rmap[value.ward] = value.value;
+                });
+
+                wardlayer.eachLayer(function (layer) {
+                    var no = layer.feature.properties['WD_NUMBER'];
+                    //console.log(no);
+                    var value = rmap[no];
+                    if (value != undefined) {
+                        layer.setStyle({
+                            fillColor :'red',
+                            weight: 2,
+                            opacity: 1,
+                            color: 'white',
+                            dashArray: '3',
+                            fillOpacity: value / 200
+                        })
+                    } else {
+                        layer.setStyle({
+                            fillColor :'white',
+                            weight: 1,
+                            opacity: 1,
+                            color: 'red',
+                            dashArray: '3',
+                            fillOpacity: 0
+                        })
+                    }
+
+                });
+            }
+        });
+    }
+
+
+    $(function() {
+
+        sliderSetup();
+
+        function onEachFeature(feature, layer) {
+            if (feature.properties && feature.properties.WD_NAME) {
+                layer.bindPopup(feature.properties.WD_NAME);
+            }
         }
-    })
-}
 
-function renderFoggingArea() {
-    $.ajax({
-        datatype: "json",
-        url: "control.json",
-        success: function(data) {
-            var group = L.layerGroup()
-
-            $(data).each(function(key, value) {
-                var type = value.type;
-                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "blue", fillColor: "blue"}));
-                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type, 50));
-            });
-
-            layerControl.addOverlay(group , "Fogging area");
+        function bindPopup(layer, data) {
+            console.log(data.properties.WD_NAME);
+            layer.bindPopup(data.properties.WD_NAME, {closeButton: false, offset: L.point(0, -20)});
         }
-    })
-}
 
-function renderRiskValue(idx) {
-    $.ajax({
-        dataType: "json",
-        url: "risk.json",
-        success: function(data) {
-            var rmap = {}
-            $(data[idx].risks).each(function(key, value) {
-                rmap[value.ward] = value.value;
-            });
+        $.ajax({
+            dataType: "json",
+            url: "cmc.geojson",
+            success: function(response) {
 
-            wardlayer.eachLayer(function (layer) {
-                var no = layer.feature.properties['WD_NUMBER'];
-                //console.log(no);
-                var value = rmap[no];
-                if (value != undefined) {
-                    layer.setStyle({
-                        fillColor :'red',
-                        weight: 2,
-                        opacity: 1,
-                        color: 'white',
-                        dashArray: '3',
-                        fillOpacity: value / 200
-                    })
-                } else {
-                    layer.setStyle({
+                wardlayer = L.geoJson(response, {
+                    onEachFeature: onEachFeature,
+                    style: {
                         fillColor :'white',
                         weight: 1,
                         opacity: 1,
                         color: 'red',
                         dashArray: '3',
                         fillOpacity: 0
-                    })
-                }
+                    }
+                });
 
-            });
+                layerControl.addOverlay(wardlayer , "Risk");
+
+
+                renderRiskValue(0);
+                renderCases();
+                renderBreadingSite();
+
+                loadAbadonLayer();
+                renderFoggingArea();
+                // added by Diminudu, Harsha & Roshan
+                renderHistoricalHighRiskArea();
+                renderSchools();
+                renderWaterArea();
+                renderConstructionSites();
+                renderHighDensityArea();
+                // renderAbandonedSites();
+                loadSatScan();
+                //=========================
+            }
+        });
+
+
+
+        function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+            var R = 6371; // Radius of the earth in km
+            var dLat = deg2rad(lat2-lat1);  // deg2rad below
+            var dLon = deg2rad(lon2-lon1);
+            var a =
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                Math.sin(dLon/2) * Math.sin(dLon/2)
+            ;
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            var d = R * c; // Distance in km
+            return d;
         }
+
+        function deg2rad(deg) {
+            return deg * (Math.PI/180)
+        }
+
+
+
+        $('.map_container').height(window.screen.height - 160);
+        $('#map').height(window.screen.height - 160);
+
+
+
     });
-}
-
-
-$(function() {
-
-    sliderSetup();
-
-    function onEachFeature(feature, layer) {
-        if (feature.properties && feature.properties.WD_NAME) {
-            layer.bindPopup(feature.properties.WD_NAME);
-        }
-    }
-
-    function bindPopup(layer, data) {
-        console.log(data.properties.WD_NAME);
-        layer.bindPopup(data.properties.WD_NAME, {closeButton: false, offset: L.point(0, -20)});
-    }
-
-    $.ajax({
-        dataType: "json",
-        url: "cmc.geojson",
-        success: function(response) {
-
-            wardlayer = L.geoJson(response, {
-                onEachFeature: onEachFeature,
-                style: {
-                    fillColor :'white',
-                    weight: 1,
-                    opacity: 1,
-                    color: 'red',
-                    dashArray: '3',
-                    fillOpacity: 0
-                }
-            });
-
-            layerControl.addOverlay(wardlayer , "Risk");
-
-
-            renderRiskValue(0);
-            renderCases();
-            renderBreadingSite();
-
-            loadAbadonLayer();
-            renderFoggingArea();
-         // added by Diminudu, Harsha & Roshan
-            renderHistoricalHighRiskArea();
-            renderSchools();
-            renderWaterArea();
-            renderConstructionSites();
-            renderHighDensityArea();
-            renderAbandonedSites();
-            loadSatScan();
-            //=========================
-        }
-    });
-
-
-
-    function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
-        var R = 6371; // Radius of the earth in km
-        var dLat = deg2rad(lat2-lat1);  // deg2rad below
-        var dLon = deg2rad(lon2-lon1);
-        var a =
-            Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-            Math.sin(dLon/2) * Math.sin(dLon/2)
-        ;
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        var d = R * c; // Distance in km
-        return d;
-    }
-
-    function deg2rad(deg) {
-        return deg * (Math.PI/180)
-    }
-
-
-
-    $('.map_container').height(window.screen.height - 160);
-    $('#map').height(window.screen.height - 160);
-
-
-
-});
 
 </script>
 </body>

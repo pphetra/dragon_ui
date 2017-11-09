@@ -152,16 +152,19 @@
         })
     }
 
-    function renderControlCircle(lat, lng, idx, type) {
+    function renderControlCircle(lat, lng, idx, type, r) {
         var score = (5 - idx)/ 5;
         var color = "#1ebbd7";
         if (type == 'spray') {
             color = "#5ebb27";
         } else if (type == 'dunk') {
             color = "#4e3327";
+        } else if (type == 'breading') {
+            color = "#8C00FF";
         }
         var rcolor = ColorLuminance('color', score);
-    return LGeo.circle([lat, lng], 300, {radius: 300, color: color})
+        rad = r || 300;
+        return LGeo.circle([lat, lng], rad, {radius: rad, color: color})
     }
 
     function renderCases() {
@@ -170,15 +173,19 @@
             url: "cases.json",
             success: function(data) {
 
+
                 var group = L.layerGroup()
 
                 $(data).each(function(key, value) {
-                    score = (5 - value.weekIdx)/ 5;
-                    var color = ColorLuminance('#ff0000', score);
-                    var rcolor = ColorLuminance('#1ebbd7', score);
 
-                    c1 = L.circle([value.lat, value.lng], {radius: 5, color: color, fillColor: color});
-                    c2 = L.circle([value.lat, value.lng], {radius: 100, color: color, fillColor: color});
+                    var ary = value.geometry.coordinates;
+                    lat = ary[1];
+                    lng = ary[0];
+
+                    var color = ColorLuminance('#ff0000', 1);
+
+                    c1 = L.circle([lat, lng], {radius: 5, color: color, fillColor: color});
+                    c2 = L.circle([lat, lng], {radius: 100, color: color, fillColor: color});
                     group.addLayer(c1);
                     group.addLayer(c2);
                 })
@@ -197,8 +204,13 @@ function renderBreadingSite() {
 
                 $(data).each(function(key, value) {
                     var type = value.type;
-                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "green", fillColor: "green"}));
-                    group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
+
+                    var ary = value.geometry.coordinates;
+                    lat = ary[1];
+                    lng = ary[0];
+
+                    group.addLayer(L.circle([lat, lng], {radius: 5, color: "green", fillColor: "green"}));
+                    group.addLayer(renderControlCircle(lat, lng, 0, "breading"));
                 });
 
                 layerControl.addOverlay(group , "Active Breading site");
@@ -226,23 +238,28 @@ function renderBreadingSite() {
     }
 
     function renderSchools() {
+        console.log('load school');
         $.ajax({
             datatype: "json",
             url: "Schools.json",
             success: function(data) {
+                console.log(data);
                 var group = L.layerGroup()
 
                 $(data).each(function(key, value) {
-                    var type = value.type;
+                    var ary = value.geometry.coordinates;
+                    lat = ary[1];
+                    lng = ary[0];
+
                     var marker = L.icon.fontAwesome({
                         iconClasses: 'fa fa-graduation-cap', // you _could_ add other icon classes, not tested.
-                        markerColor: '#00a9ce',
+                        markerColor: '#8B0000',
                         iconColor: '#FFF',
-                        iconXOffset: -4
+                        iconXOffset: -4,
                     });
 
 
-                    group.addLayer(L.marker([value.lat, value.lng], {icon: marker}));
+                    group.addLayer(L.marker([lat, lng], {icon: marker}));
                 });
 
                 layerControl.addOverlay(group , "Schools");
@@ -274,7 +291,11 @@ function renderBreadingSite() {
                 var group = L.layerGroup()
 
                 $(data).each(function(key, value) {
-                    var type = value.type;
+
+                    var ary = value.geometry.coordinates;
+                    lat = ary[1];
+                    lng = ary[0];
+
                     var marker = L.icon.fontAwesome({
                         iconClasses: 'fa fa-building', // you _could_ add other icon classes, not tested.
                         markerColor: '#0aafff',
@@ -283,7 +304,7 @@ function renderBreadingSite() {
                     });
 
 
-                    group.addLayer(L.marker([value.lat, value.lng], {icon: marker}));
+                    group.addLayer(L.marker([lat, lng], {icon: marker}));
                 });
 
                 layerControl.addOverlay(group , "Construction Sites");
@@ -373,9 +394,13 @@ function renderBreadingSite() {
                 var group = L.layerGroup()
 
                 $(data).each(function(key, value) {
-                    var type = value.type;
-                    group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "blue", fillColor: "blue"}));
-                    group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type, 50));
+
+                    var ary = value.geometry.coordinates;
+                    lat = ary[1];
+                    lng = ary[0];
+
+                    group.addLayer(L.circle([lat, lng], {radius: 5, color: "blue", fillColor: "blue"}));
+                    group.addLayer(renderControlCircle(lat, lng, value.weekIdx, "spray", 50));
                 });
 
                 layerControl.addOverlay(group , "Fogging area");

@@ -222,6 +222,27 @@ function renderFoggingArea() {
     })
 }
 
+function loadSatScan() {
+    $.ajax({
+        dataType: "json",
+        url: "DengueSat.geojson",
+        success: function(response) {
+            var satScan = L.geoJson(response, {
+                style: {
+                    fillColor: 'red',
+                    weight: 4,
+                    opacity: 1,
+                    color: 'red',
+                    dashArray: '1',
+                    fillOpacity: 0
+                }
+            });
+            layerControl.addOverlay(satScan , "Cluster Detected");
+        }
+    });
+}
+
+
 function loadAbadonLayer() {
     $.ajax({
         dataType: "json",
@@ -317,6 +338,7 @@ $(function() {
             renderBreadingSite();
             loadAbadonLayer();
             renderFoggingArea();
+            loadSatScan();
         }
     });
 

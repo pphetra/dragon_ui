@@ -52,7 +52,9 @@
     </div>
 
     <div class="row footer">
-        <div class="col-md-5"></div>
+        <div class="col-md-5">
+            <button id="refresh-btn" class="btn btn-default">Refresh</button>
+        </div>
         <div class="col-md-2">
             <input type="text" id="time_idx" value="10">
         </div>
@@ -261,6 +263,24 @@ function loadAbadonLayer() {
     })
 }
 
+function loadHotSpotData() {
+    $.ajax({
+        dataType: "json",
+        url: "http://10.194.215.101/phi/map/get_hotspot_data.php",
+        success: function(data) {
+            var group = L.layerGroup()
+            var color = "#FF2299";
+            $(data).each(function(key, value) {
+                c1 = L.circle([value.lat, value.lng], {radius: 5, color: color, fillColor: color});
+                c2 = L.circle([value.lat, value.lng], {radius: 50, color: color, fillColor: color});
+                group.addLayer(c1);
+                group.addLayer(c2);
+            });
+            layerControl.addOverlay(group , "Live Cases");
+        }
+    });
+}
+
 function renderRiskValue(idx) {
     $.ajax({
         dataType: "json",
@@ -350,7 +370,9 @@ $(function() {
 });
 
 
-
+$('#refresh-btn').click(function(evt) {
+    loadHotSpotData();
+});
 
 
 

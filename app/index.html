@@ -9,7 +9,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
 
+    <link rel="stylesheet" href="awe.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
           integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
           crossorigin=""/>
@@ -56,7 +58,8 @@
         <div class="col-md-2">
             <input type="text" id="time_idx" value="10">
         </div>
-        <div class="col-md-5"></div>
+        <div class="col-md-5">
+        </div>
     </div>
 
 </div>
@@ -65,6 +68,8 @@
 <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
         integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
         crossorigin=""></script>
+
+<script src="awe.js"></script>
 
 <script>
 var map = L.map('map').setView([6.91376, 79.8752], 15);
@@ -229,8 +234,15 @@ function renderSchools() {
 
             $(data).each(function(key, value) {
                 var type = value.type;
-                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
-                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
+                var marker = L.icon.fontAwesome({
+                    iconClasses: 'fa fa-graduation-cap', // you _could_ add other icon classes, not tested.
+                    markerColor: '#00a9ce',
+                    iconColor: '#FFF',
+                    iconXOffset: -4
+                });
+
+
+                group.addLayer(L.marker([value.lat, value.lng], {icon: marker}));
             });
 
             layerControl.addOverlay(group , "Schools");
@@ -313,7 +325,7 @@ function loadSatScan() {
             var satScan = L.geoJson(response, {
                 style: {
                     fillColor: 'red',
-                    weight: 10,
+                    weight: 3,
                     opacity: 1,
                     color: 'red',
                     dashArray: '1',
@@ -483,16 +495,6 @@ $(function() {
 
 
 });
-
-
-
-
-
-
-
-
-
-
 
 </script>
 </body>

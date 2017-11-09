@@ -150,16 +150,16 @@ function sliderSetup() {
     })
 }
 
-function renderControlCircle(lat, lng, idx, type) {
+function renderControlCircle(lat, lng, idx, type, r) {
+    console.log('>>>', r);
     var score = (5 - idx)/ 5;
-    var color = "#1ebbd7";
+    var color = "#FFCC00";
     if (type == 'spray') {
         color = "#5ebb27";
     } else if (type == 'dunk') {
         color = "#4e3327";
     }
-    var rcolor = ColorLuminance('color', score);
-    return LGeo.circle([lat, lng], 300, {radius: 300, color: rcolor})
+    return LGeo.circle([lat, lng], r, {color: color})
 }
 
 function renderCases() {
@@ -186,7 +186,25 @@ function renderCases() {
     })
 }
 
-function renderControl() {
+function renderBreadingSite() {
+    $.ajax({
+        datatype: "json",
+        url: "breadingSite.json",
+        success: function(data) {
+            var group = L.layerGroup()
+
+            $(data).each(function(key, value) {
+                var type = value.type;
+                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "yellow", fillColor: "yellow"}));
+                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type, 300));
+            });
+
+            layerControl.addOverlay(group , "Active Breading site");
+        }
+    })
+}
+
+function renderFoggingArea() {
     $.ajax({
         datatype: "json",
         url: "control.json",
@@ -195,11 +213,11 @@ function renderControl() {
 
             $(data).each(function(key, value) {
                 var type = value.type;
-                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "green", fillColor: "green"}));
-                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
+                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "blue", fillColor: "blue"}));
+                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type, 50));
             });
 
-            layerControl.addOverlay(group , "Active Breading site");
+            layerControl.addOverlay(group , "Fogging area");
         }
     })
 }
@@ -231,7 +249,7 @@ function renderRiskValue(idx) {
             $(data[idx].risks).each(function(key, value) {
                 rmap[value.ward] = value.value;
             });
-
+            console.log('calculate on ' + idx);
             wardlayer.eachLayer(function (layer) {
                 var no = layer.feature.properties['WD_NUMBER'];
                 console.log(no);
@@ -296,8 +314,9 @@ $(function() {
 
             renderRiskValue(0);
             renderCases();
-            renderControl();
+            renderBreadingSite();
             loadAbadonLayer();
+            renderFoggingArea();
         }
     });
 

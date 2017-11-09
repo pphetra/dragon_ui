@@ -1,12 +1,9 @@
 [
-  {"lat":6.9356, "lng": 79.86314, "date": "2017-11-01", "type": "spray", "weekIdx": 0},
-  {"lat":6.9156, "lng": 79.36944, "date": "2017-11-01", "type": "spray", "weekIdx": 0},
-  {"lat":6.4456, "lng": 79.76923, "date": "2017-11-01", "type": "dunk", "weekIdx": 1},
-  {"lat":6.9226, "lng": 79.86442, "date": "2017-11-01", "type": "dunk", "weekIdx": 1},
-  {"lat":6.9256, "lng": 79.83946, "date": "2017-11-01", "type": "icon", "weekIdx": 2},
-  {"lat":6.9233, "lng": 79.86382, "date": "2017-11-01", "type": "icon", "weekIdx": 4},
-  {"lat":6.9252, "lng": 79.86312, "date": "2017-11-01", "type": "icon", "weekIdx": 4},
-  {"lat":6.9126, "lng": 79.86511, "date": "2017-11-01", "type": "spray", "weekIdx": 4},
-  {"lat":6.9233, "lng": 79.86232, "date": "2017-11-01", "type": "dunk", "weekIdx": 4},
-  {"lat":6.9233, "lng": 79.86103, "date": "2017-11-01", "type": "spray", "weekIdx": 4}
+  {"lat":6.9336, "lng": 79.88314, "date": "2017-11-01", "type": "spray", "weekIdx": 0},
+  {"lat":6.9156, "lng": 79.85144, "date": "2017-11-01", "type": "spray", "weekIdx": 0},
+  {"lat":6.4256, "lng": 79.86123, "date": "2017-11-01", "type": "dunk", "weekIdx": 1},
+  {"lat":6.9216, "lng": 79.86142, "date": "2017-11-01", "type": "dunk", "weekIdx": 1},
+  {"lat":6.9206, "lng": 79.87246, "date": "2017-11-01", "type": "icon", "weekIdx": 2},
+  {"lat":6.9293, "lng": 79.89982, "date": "2017-11-01", "type": "dunk", "weekIdx": 4},
+  {"lat":6.9213, "lng": 79.89303, "date": "2017-11-01", "type": "spray", "weekIdx": 4}
 ]

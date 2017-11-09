@@ -52,9 +52,7 @@
     </div>
 
     <div class="row footer">
-        <div class="col-md-5">
-            <button id="refresh-btn" class="btn btn-default">Refresh</button>
-        </div>
+        <div class="col-md-5"></div>
         <div class="col-md-2">
             <input type="text" id="time_idx" value="10">
         </div>
@@ -152,16 +150,16 @@ function sliderSetup() {
     })
 }
 
-function renderControlCircle(lat, lng, idx, type, r) {
-    console.log('>>>', r);
+function renderControlCircle(lat, lng, idx, type) {
     var score = (5 - idx)/ 5;
-    var color = "#FFCC00";
+    var color = "#1ebbd7";
     if (type == 'spray') {
         color = "#5ebb27";
     } else if (type == 'dunk') {
         color = "#4e3327";
     }
-    return LGeo.circle([lat, lng], r, {color: color})
+    var rcolor = ColorLuminance('color', score);
+    return LGeo.circle([lat, lng], 300, {radius: 300, color: rcolor})
 }
 
 function renderCases() {
@@ -188,25 +186,7 @@ function renderCases() {
     })
 }
 
-function renderBreadingSite() {
-    $.ajax({
-        datatype: "json",
-        url: "breadingSite.json",
-        success: function(data) {
-            var group = L.layerGroup()
-
-            $(data).each(function(key, value) {
-                var type = value.type;
-                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "yellow", fillColor: "yellow"}));
-                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type, 300));
-            });
-
-            layerControl.addOverlay(group , "Active Breading site");
-        }
-    })
-}
-
-function renderFoggingArea() {
+function renderControl() {
     $.ajax({
         datatype: "json",
         url: "control.json",
@@ -215,36 +195,121 @@ function renderFoggingArea() {
 
             $(data).each(function(key, value) {
                 var type = value.type;
-                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "blue", fillColor: "blue"}));
-                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type, 50));
+                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "green", fillColor: "green"}));
+                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
             });
 
-            layerControl.addOverlay(group , "Fogging area");
+            layerControl.addOverlay(group , "Active Breading site");
+        }
+    })
+}
+// Added by Dimindu, Harsha, Roshan ==============
+
+function renderHistoricalHighRiskArea() {
+    $.ajax({
+        datatype: "json",
+        url: "highRiskArea.json",
+        success: function(data) {
+            var group = L.layerGroup()
+
+            $(data).each(function(key, value) {
+                var type = value.type;
+                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
+                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
+            });
+
+            layerControl.addOverlay(group , "high risk area");
         }
     })
 }
 
-function loadSatScan() {
+function renderSchools() {
     $.ajax({
-        dataType: "json",
-        url: "DengueSat.geojson",
-        success: function(response) {
-            var satScan = L.geoJson(response, {
-                style: {
-                    fillColor: 'red',
-                    weight: 4,
-                    opacity: 1,
-                    color: 'red',
-                    dashArray: '1',
-                    fillOpacity: 0
-                }
+        datatype: "json",
+        url: "Schools.json",
+        success: function(data) {
+            var group = L.layerGroup()
+
+            $(data).each(function(key, value) {
+                var type = value.type;
+                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
+                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
             });
-            layerControl.addOverlay(satScan , "Cluster Detected");
+
+            layerControl.addOverlay(group , "Schools");
         }
-    });
+    })
+}
+function renderWaterArea() {
+    $.ajax({
+        datatype: "json",
+        url: "WaterArea.json",
+        success: function(data) {
+            var group = L.layerGroup()
+
+            $(data).each(function(key, value) {
+                var type = value.type;
+                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
+                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
+            });
+
+            layerControl.addOverlay(group , "Water Area");
+        }
+    })
+}
+function renderConstructionSites() {
+    $.ajax({
+        datatype: "json",
+        url: "ConstructionSites.json",
+        success: function(data) {
+            var group = L.layerGroup()
+
+            $(data).each(function(key, value) {
+                var type = value.type;
+                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
+                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
+            });
+
+            layerControl.addOverlay(group , "Construction Sites");
+        }
+    })
+}
+function renderAbandonedSites() {
+    $.ajax({
+        datatype: "json",
+        url: "AbandonedSite.json",
+        success: function(data) {
+            var group = L.layerGroup()
+
+            $(data).each(function(key, value) {
+                var type = value.type;
+                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
+                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
+            })
+
+            layerControl.addOverlay(group , "Abandoned Sites");
+        }
+    })
+}
+function renderHighDensityArea() {
+    $.ajax({
+        datatype: "json",
+        url: "HighDensityArea.json",
+        success: function(data) {
+            var group = L.layerGroup()
+
+            $(data).each(function(key, value) {
+                var type = value.type;
+                group.addLayer(L.circle([value.lat, value.lng], {radius: 5, color: "red", fillColor: "red"}));
+                group.addLayer(renderControlCircle(value.lat, value.lng, value.weekIdx, type));
+            })
+
+            layerControl.addOverlay(group , "High Density Area");
+        }
+    })
 }
 
-
+//======================
 function loadAbadonLayer() {
     $.ajax({
         dataType: "json",
@@ -263,24 +328,6 @@ function loadAbadonLayer() {
     })
 }
 
-function loadHotSpotData() {
-    $.ajax({
-        dataType: "json",
-        url: "http://10.194.215.101/phi/map/get_hotspot_data.php",
-        success: function(data) {
-            var group = L.layerGroup()
-            var color = "#FF2299";
-            $(data).each(function(key, value) {
-                c1 = L.circle([value.lat, value.lng], {radius: 5, color: color, fillColor: color});
-                c2 = L.circle([value.lat, value.lng], {radius: 50, color: color, fillColor: color});
-                group.addLayer(c1);
-                group.addLayer(c2);
-            });
-            layerControl.addOverlay(group , "Live Cases");
-        }
-    });
-}
-
 function renderRiskValue(idx) {
     $.ajax({
         dataType: "json",
@@ -290,10 +337,10 @@ function renderRiskValue(idx) {
             $(data[idx].risks).each(function(key, value) {
                 rmap[value.ward] = value.value;
             });
-            console.log('calculate on ' + idx);
+
             wardlayer.eachLayer(function (layer) {
                 var no = layer.feature.properties['WD_NUMBER'];
-                console.log(no);
+                //console.log(no);
                 var value = rmap[no];
                 if (value != undefined) {
                     layer.setStyle({
@@ -355,12 +402,41 @@ $(function() {
 
             renderRiskValue(0);
             renderCases();
-            renderBreadingSite();
-            loadAbadonLayer();
-            renderFoggingArea();
-            loadSatScan();
+            renderControl();
+
+         //   loadAbadonLayer();
+         // added by Diminudu, Harsha & Roshan
+            renderHistoricalHighRiskArea();
+            renderSchools();
+            renderWaterArea();
+            renderConstructionSites();
+            renderHighDensityArea();
+            renderAbandonedSites();
+            //=========================
         }
     });
+
+
+
+    function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+        var R = 6371; // Radius of the earth in km
+        var dLat = deg2rad(lat2-lat1);  // deg2rad below
+        var dLon = deg2rad(lon2-lon1);
+        var a =
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+            Math.sin(dLon/2) * Math.sin(dLon/2)
+        ;
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var d = R * c; // Distance in km
+        return d;
+    }
+
+    function deg2rad(deg) {
+        return deg * (Math.PI/180)
+    }
+
+
 
     $('.map_container').height(window.screen.height - 160);
     $('#map').height(window.screen.height - 160);
@@ -370,9 +446,7 @@ $(function() {
 });
 
 
-$('#refresh-btn').click(function(evt) {
-    loadHotSpotData();
-});
+
 
 
 

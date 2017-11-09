@@ -161,7 +161,7 @@ function renderControlCircle(lat, lng, idx, type) {
         color = "#4e3327";
     }
     var rcolor = ColorLuminance('color', score);
-    return LGeo.circle([lat, lng], 300, {radius: 300, color: rcolor})
+    return LGeo.circle([lat, lng], 300, {radius: 300, color: color})
 }
 
 function renderCases() {
@@ -188,10 +188,10 @@ function renderCases() {
     })
 }
 
-function renderControl() {
+function renderBreadingSite() {
     $.ajax({
         datatype: "json",
-        url: "control.json",
+        url: "breadingSite.json",
         success: function(data) {
             var group = L.layerGroup()
 
@@ -451,7 +451,7 @@ $(function() {
 
             renderRiskValue(0);
             renderCases();
-            renderControl();
+            renderBreadingSite();
 
             loadAbadonLayer();
             renderFoggingArea();

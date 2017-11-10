@@ -53,14 +53,14 @@
 
     </div>
 
-    <div class="row footer">
-        <div class="col-md-5"></div>
-        <div class="col-md-2">
-            <input type="text" id="time_idx" value="10">
-        </div>
-        <div class="col-md-5">
-        </div>
-    </div>
+    <!--<div class="row footer">-->
+        <!--<div class="col-md-5"></div>-->
+        <!--<div class="col-md-2">-->
+            <!--<input type="text" id="time_idx" value="10">-->
+        <!--</div>-->
+        <!--<div class="col-md-5">-->
+        <!--</div>-->
+    <!--</div>-->
 
 </div>
 
@@ -190,7 +190,7 @@
                     group.addLayer(c2);
                 })
 
-                layerControl.addOverlay(group , "Case");
+                layerControl.addOverlay(group , "Cases");
             }
         })
     }
@@ -450,7 +450,7 @@ function renderBreadingSite() {
 
     $(function() {
 
-        sliderSetup();
+//        sliderSetup();
 
         function onEachFeature(feature, layer) {
             if (feature.properties && feature.properties.WD_NAME) {
@@ -483,20 +483,22 @@ function renderBreadingSite() {
                 layerControl.addOverlay(wardlayer , "Risk");
 
 
-                renderRiskValue(0);
                 renderCases();
-                renderBreadingSite();
 
-                loadAbadonLayer();
-                renderFoggingArea();
-                // added by Diminudu, Harsha & Roshan
-                renderHistoricalHighRiskArea();
-                renderSchools();
-                renderWaterArea();
-                renderConstructionSites();
-                renderHighDensityArea();
                 // renderAbandonedSites();
                 loadSatScan();
+                renderRiskValue(4);
+                renderSchools();
+                renderConstructionSites();
+                loadAbadonLayer();
+
+                renderBreadingSite();
+
+                renderFoggingArea();
+                // added by Diminudu, Harsha & Roshan
+//                renderHistoricalHighRiskArea();
+//                renderWaterArea();
+//                renderHighDensityArea();
                 //=========================
             }
         });
@@ -523,10 +525,22 @@ function renderBreadingSite() {
 
 
 
-        $('.map_container').height(window.screen.height - 160);
-        $('#map').height(window.screen.height - 160);
+        $('.map_container').height(window.screen.height - 10);
+        $('#map').height(window.screen.height - 10);
 
+        map.on('keypress', function(evt) {
+            var key = evt.originalEvent.key
+            if (key == '1') {
+                renderRiskValue(0);
+            } else if (key == '2') {
+                renderRiskValue(1);
+            }
+        })
+        map.invalidateSize()
 
+        map.on('resize', function () {
+            map.invalidateSize();
+        });
 
     });
 
